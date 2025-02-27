@@ -73,33 +73,39 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    int angle = 0;
-    float pi = acos(-1.0);
+    float angle = 0;
+    float pi = 3.14159265359f;
+    double lastTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window))
     {
-        angle += 1;
-        float radians = angle * (pi / 180.0f);
+        double currentTime = glfwGetTime();
+        if (currentTime - lastTime >= 1.0) {
+            angle += 0.1;
+            float radians = angle * pi;
 
-        float rotateTransformation[3][3] = {
-            {cos(radians), -sin(radians), 0},
-            {sin(radians), cos(radians), 0},
-            {0, 0, 1}
-        };
+            float rotateTransformation[3][3] = {
+                {cos(radians), -sin(radians), 0},
+                {sin(radians),  cos(radians), 0},
+                {0           ,  0           , 1}
+            };
 
-        for (int i = 0; i < 3; i++) {
-            multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
+            for (int i = 0; i < 3; i++) {
+                multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
+            }
+            lastTime = currentTime;
+
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glClearColor(1.00f, 1.00f, 1.00f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
