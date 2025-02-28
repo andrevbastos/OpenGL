@@ -19,6 +19,98 @@ const char* fragmentShaderSource = "#version 330 core\n"
 
 void multiplyMatrixVector(float matrix[3][3], float& x, float& y);
 
+class VBO {
+public:
+    VBO() {
+        glGenBuffers(1, &_id);
+    }
+
+    GLuint id() {
+        return _id;
+    }
+
+    void bind() {
+        glBindBuffer(GL_ARRAY_BUFFER, _id);
+    }
+
+    void unbind() {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    void bufferData(size_t size, const void* data) {
+        glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+    }
+
+    void destroy() {
+        glDeleteBuffers(1, &_id);
+    }
+
+private:
+    GLuint _id;
+};
+
+class VAO {
+public:
+    VAO() {
+        glGenBuffers(1, &_id);
+    }
+
+    GLuint id() {
+        return _id;
+    }
+
+    void linkAttrib(VBO vbo, GLuint layout, GLuint numComponent, GLenum type, GLsizeiptr size, void* offset) {
+        vbo.bind();
+        glVertexAttribPointer(0, layout, numComponent, type, size, offset);
+        glEnableVertexAttribArray(0);
+    }
+
+    void bind() {
+        glBindVertexArray(_id);
+    }
+
+    void unbind() {
+        glBindVertexArray(0);
+    }
+
+    void destroy() {
+        glDeleteVertexArrays(1, &_id);
+    }
+
+private:
+    GLuint _id;
+};
+
+class EBO {
+public:
+    EBO() {
+        glGenBuffers(1, &_id);
+    }
+
+    GLuint id() {
+        return _id;
+    }
+
+    void bind() {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _id);
+    }
+
+    void unbind() {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    void bufferData(size_t size, const void* data) {
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    }
+
+    void destroy() {
+        glDeleteBuffers(1, &_id);
+    }
+
+private:
+    GLuint _id;
+};
+
 int main()
 {
     glfwInit();
@@ -55,61 +147,47 @@ int main()
     glDeleteShader(fragmentShader);
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
     };
 
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    GLuint indices[] = {
+        0, 1, 3,
+        1, 2, 3
+    };
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    VBO vbo;
+    VAO vao;
+    EBO ebo;
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    vao.bind();
 
-    float angle = 0;
-    float pi = 3.14159265359f;
-    double lastTime = glfwGetTime();
+    vbo.bind();
+    vbo.bufferData(sizeof(vertices), vertices);
+
+    ebo.bind();
+    ebo.bufferData(sizeof(indices), indices);
+
+    vao.linkAttrib(vbo, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    vbo.unbind();
+    vao.unbind();
+    ebo.unbind();
 
     while (!glfwWindowShouldClose(window))
     {
-        double currentTime = glfwGetTime();
-        if (currentTime - lastTime >= 1.0) {
-            angle += 0.1;
-            float radians = angle * pi;
-
-            float rotateTransformation[3][3] = {
-                {cos(radians), -sin(radians), 0},
-                {sin(radians),  cos(radians), 0},
-                {0           ,  0           , 1}
-            };
-
-            for (int i = 0; i < 3; i++) {
-                multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
-            }
-            lastTime = currentTime;
-
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-
-        glClearColor(1.00f, 1.00f, 1.00f, 1.00f);
+        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
+        vao.bind();
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
+    glfwDestroyWindow(window);
+    glfwTerminate();
     return 0;
 }
 
