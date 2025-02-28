@@ -1,23 +1,23 @@
 #include <iostream>
-#include <cmath>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos, 1.0);\n"
-"}\0";
+#include "shaderClass.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-"}\n\0";
+float vertices[] = {
+     0.5f,  0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    -0.5f,  0.5f, 0.0f
+};
 
-void multiplyMatrixVector(float matrix[3][3], float& x, float& y);
+GLuint indices[] = {
+    0, 1, 3,
+    1, 2, 3
+};
 
 int main()
 {
@@ -26,7 +26,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(500, 500, "OpenGL Rotation", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -38,84 +38,38 @@ int main()
     gladLoadGL();
     glViewport(0, 0, 500, 500);
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    Shader shaderProgram("default.vert", "default.frag");
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    VAO vao;
+    vao.bind();
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    VBO vbo(sizeof(vertices), vertices);
+    EBO ebo(sizeof(indices), indices);
 
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
-
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    float angle = 0;
-    float pi = 3.14159265359f;
-    double lastTime = glfwGetTime();
+    vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    vao.unbind();
+    vbo.unbind();
+    ebo.unbind();
 
     while (!glfwWindowShouldClose(window))
     {
-        double currentTime = glfwGetTime();
-        if (currentTime - lastTime >= 1.0) {
-            angle += 0.1;
-            float radians = angle * pi;
-
-            float rotateTransformation[3][3] = {
-                {cos(radians), -sin(radians), 0},
-                {sin(radians),  cos(radians), 0},
-                {0           ,  0           , 1}
-            };
-
-            for (int i = 0; i < 3; i++) {
-                multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
-            }
-            lastTime = currentTime;
-
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-
-        glClearColor(1.00f, 1.00f, 1.00f, 1.00f);
+        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        shaderProgram.activate();
+        vao.bind();
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    return 0;
-}
+    vao.destroy();
+    vbo.destroy();
+    ebo.destroy();
+    shaderProgram.destroy();
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
-void multiplyMatrixVector(float matrix[3][3], float& x, float& y) {
-    float newX = matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * 1;
-    float newY = matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * 1;
-    x = newX;
-    y = newY;
+    return 0;
 }
