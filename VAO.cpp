@@ -1,28 +1,29 @@
-#include"VAO.h" 
+#include "VAO.h"
 
-VAO::VAO() {
-    glGenBuffers(1, &_id);
+VAO::VAO()
+{
+    glGenVertexArrays(1, &_id);
 }
 
-GLuint VAO::id() {
-    return _id;
-}
-
-void VAO::linkAttrib(VBO vbo, GLuint layout, GLuint numComponent, GLenum type, GLsizeiptr stride, void* offset) {
+void VAO::linkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset)
+{
     vbo.bind();
-    glVertexAttribPointer(layout, numComponent, type, GL_FALSE, stride, offset);
+    glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
     glEnableVertexAttribArray(layout);
+    vbo.unbind();
 }
 
-
-void VAO::bind() {
+void VAO::bind()
+{
     glBindVertexArray(_id);
 }
 
-void VAO::unbind() {
+void VAO::unbind()
+{
     glBindVertexArray(0);
 }
 
-void VAO::destroy() {
+void VAO::destroy()
+{
     glDeleteVertexArrays(1, &_id);
 }

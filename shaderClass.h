@@ -1,22 +1,20 @@
 #ifndef SHADER_CLASS_H
 #define SHADER_CLASS_H
 
-#include<glad/glad.h>
-#include<string>
-#include<fstream>
-#include<sstream>
-#include<iostream>
-#include<cerrno>
+#include <glad/glad.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
-std::string get_file_contents(const char* filename);
-
-class Shader {
+class Shader
+{
 public:
-	GLuint _id;
-	Shader(const char* vertexFile, const char* fragmentFile);
+    GLuint ID;
+    Shader(const char* vertexFile, const char* fragmentFile);
 
-	void activate();
-	void destroy();
+    void activate();
+    void destroy();
 };
 
 #endif

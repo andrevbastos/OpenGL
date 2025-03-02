@@ -4,16 +4,16 @@
 #include <glad/glad.h>
 #include "VBO.h"
 
-class VAO {
+class VAO
+{
 public:
+    GLuint _id;
     VAO();
-    GLuint id();
-    void linkAttrib(VBO vbo, GLuint layout, GLuint numComponent, GLenum type, GLsizeiptr stride, void* offset);
+
+    void linkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
     void bind();
     void unbind();
     void destroy();
-private:
-    GLuint _id;
 };
 
 #endif

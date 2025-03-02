@@ -3,14 +3,15 @@
 
 #include <glad/glad.h>
 
-class EBO {
+class EBO
+{
 public:
-	GLuint _id;
-	EBO(GLsizeiptr size, GLuint* indices);
-	void bind();
-	void unbind();
-	void bufferData(size_t size, const void* data);
-	void destroy();
+    GLuint _id;
+    EBO(GLsizeiptr size, const void* indices);
+
+    void bind();
+    void unbind();
+    void destroy();
 };
 
 #endif
