@@ -55,65 +55,20 @@ int main()
     {
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-    float angle = 0;
+
         shaderProgram.activate();
         vao.bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    while (!glfwWindowShouldClose(window))
-                multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
-            }
-            lastTime = currentTime;
+
+        glfwSwapBuffers(window);
+    }
+
     vao.destroy();
     vbo.destroy();
     ebo.destroy();
     shaderProgram.destroy();
     glfwDestroyWindow(window);
     glfwTerminate();
-
-
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-
-        glClearColor(1.00f, 1.00f, 1.00f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-                multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
-            }
-            lastTime = currentTime;
-
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-
-        glClearColor(1.00f, 1.00f, 1.00f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-                multiplyMatrixVector(rotateTransformation, vertices[i * 3], vertices[i * 3 + 1]);
-            }
-            lastTime = currentTime;
-
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-
-        glClearColor(1.00f, 1.00f, 1.00f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glfwSwapBuffers(window);
-    }
 
     return 0;
 }
