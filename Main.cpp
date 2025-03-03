@@ -8,10 +8,11 @@
 #include "EBO.h"
 
 float vertices[] = {
-     0.5f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f,
-    -0.5f,  0.5f, 0.0f
+	// positions        // colors
+     0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 1.0f,
+     0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f
 };
 
 GLuint indices[] = {
@@ -46,7 +47,8 @@ int main()
     VBO vbo(sizeof(vertices), vertices);
     EBO ebo(sizeof(indices), indices);
 
-    vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    vao.linkAttrib(vbo, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     vao.unbind();
     vbo.unbind();
     ebo.unbind();
