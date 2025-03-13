@@ -137,15 +137,17 @@ int main()
     vbo.unbind();
     ebo.unbind();
 
+	glEnable(GL_DEPTH_TEST);
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderProgram.activate();
 
         xAngle += 1 / 6000.0f;
-        yAngle += 1 / 6000.0f;
+        yAngle -= 1 / 6000.0f;
         zAngle += 1 / 6000.0f;
         rotate();
 
