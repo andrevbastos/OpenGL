@@ -75,8 +75,8 @@
     <LibraryPath>C:\Users\gabri\OneDrive\Documentos\André\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\HP\source\repos\OpenGL\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\HP\source\repos\OpenGL\Libraries\lib;C:\Users\gabri\OneDrive\Documentos\André\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\HP\source\repos\Extensao\Libraries\include;C:\Users\HP\source\repos\OpenGL\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\HP\source\repos\Extensao\Libraries\lib;C:\Users\HP\source\repos\OpenGL\Libraries\lib;C:\Users\gabri\OneDrive\Documentos\André\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
